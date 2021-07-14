@@ -4,27 +4,12 @@ const sharp = require("sharp");
 const path = require("path");
 const s3 = require("./filebase");
 const fs = require("fs");
-//File System
-// app.use("/images", express.static(path.join(__dirname, "public/images")));
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => cb(null, "public/images"),
-//   filename: (req, file, cb) => {
-//     // cb(null, req.body.name);
-//     cb(null, Date.now().toString() + "-" + file.originalname);
-//   },
-// });
-// const upload = multer({ storage });
 
-// -- || -- //
-// console.log(s3);
 const upload = multer({
   storage: multerS3({
     s3,
     bucket: "devchallenges",
     contentType: multerS3.AUTO_CONTENT_TYPE,
-    // metadata: function (req, file, cb) {
-    //   cb(null, Object.assign({}, req.body));
-    // },
     key: function (req, file, cb) {
       cb(null, req.body.name);
     },
