@@ -2,6 +2,7 @@ const router = require("express").Router();
 const Post = require("../models/Post");
 const mongoose = require("mongoose");
 const upload = require("../upload");
+const s3 = require("../filebase");
 
 //Create One
 router.post("/upload", upload.single("file"), async (req, res) => {
@@ -36,6 +37,35 @@ router.get("/", async (req, res) => {
     res.status(200).json({
       total: list.length,
       data: list.sort((a, b) => b.createdAt - a.createdAt),
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { images } = await Post.findById(id);
+    const { small, medium, large } = images;
+    const data = [small, medium, large];
+    const Bucket = "devchallenges";
+    const deleteS3 = async (url, Bucket) => {
+      let { pathname } = new URL(url, "http://example.org");
+      pathname = pathname.substring(1);
+      const params = {
+        Bucket,
+        Key: pathname,
+      };
+      await s3.deleteObject(params).promise();
+    };
+
+    data.forEach((url) => {
+      deleteS3(url, Bucket);
+    });
+    await Post.findByIdAndDelete(id);
+
+    res.status(200).json({
+      message: "Post with ID " + id + " has been deleted",
     });
   } catch (err) {
     res.status(500).json(err);
