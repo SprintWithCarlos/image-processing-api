@@ -6,7 +6,8 @@
   "author": "Carlos Marchena <sprintwithcarlos@pm.me>",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "npx nodemon"
   },
   "dependencies": {
     "aws-sdk": "^2.943.0",
